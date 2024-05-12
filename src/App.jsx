@@ -7,9 +7,11 @@ import Notification from "./components/notifications/Notification";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebase/firebase";
 import { useUserStore } from "./firebase/userStore";
+import { useChatStore } from "./firebase/chatStore";
 
 const App = () => {
   const { currentUser, isLoading, fetchUserInfo } = useUserStore();
+  const { chatId } = useChatStore();
 
   useEffect(() => {
     const unSub = onAuthStateChanged(auth, (user) => {
@@ -21,7 +23,6 @@ const App = () => {
     };
   }, [fetchUserInfo]);
 
-  console.log(currentUser);
 
   if (isLoading) return <div className="loading">Loading...</div>;
 
@@ -30,8 +31,9 @@ const App = () => {
       {currentUser ? (
         <>
           <List />
-          <Chat />
-          <Detail /></>
+          {chatId && <Chat />}
+          {chatId && <Detail />}
+        </>
       ) : (
         <Login />
       )}

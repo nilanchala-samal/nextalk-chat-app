@@ -3,9 +3,8 @@ import './login.css';
 import { toast } from 'react-toastify';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { auth, db } from '../../firebase/firebase';
-import { doc, setDoc } from 'firebase/firestore';
+import { collection, doc, getDocs, query, setDoc, where } from 'firebase/firestore';
 import upload from '../../firebase/upload';
-// import { toast } from 'react-toastify';
 
 const Login = () => {
     const [avatar, setAvatar] = useState({
@@ -29,29 +28,43 @@ const Login = () => {
         e.preventDefault();
         setLoading(true);
         const formData = new FormData(e.target);
+
         const { username, email, password } = Object.fromEntries(formData);
+
+        // VALIDATE INPUTS
+        if (!username || !email || !password)
+            return toast.warn("Please enter inputs!");
+        if (!avatar.file) return toast.warn("Please upload an avatar!");
+
+        // VALIDATE UNIQUE USERNAME
+        const usersRef = collection(db, "users");
+        const q = query(usersRef, where("username", "==", username));
+        const querySnapshot = await getDocs(q);
+        if (!querySnapshot.empty) {
+            return toast.warn("Select another username");
+        }
 
         try {
             const res = await createUserWithEmailAndPassword(auth, email, password);
 
-            const imgURL = await upload(avatar.file);
+            const imgUrl = await upload(avatar.file);
 
             await setDoc(doc(db, "users", res.user.uid), {
                 username,
                 email,
-                avatar: imgURL,
+                avatar: imgUrl,
                 id: res.user.uid,
-                blocked: []
+                blocked: [],
             });
 
-            await setDoc(doc(db, "userChats", res.user.uid), {
-                chats: []
+            await setDoc(doc(db, "userchats", res.user.uid), {
+                chats: [],
             });
 
-            toast.success("Account created🙌🏻. You can login now");
-        } catch (error) {
-            console.log(error);
-            toast.error(error.message);
+            toast.success("Account created! You can login now!");
+        } catch (err) {
+            console.log(err);
+            toast.error(err.message);
         } finally {
             setLoading(false);
         }
@@ -67,9 +80,9 @@ const Login = () => {
 
         try {
             await signInWithEmailAndPassword(auth, email, password);
-        } catch (error) {
-            console.log(error);
-            toast.error(error.message);
+        } catch (err) {
+            console.log(err);
+            toast.error(err.message);
         } finally {
             setLoading(false);
         }
