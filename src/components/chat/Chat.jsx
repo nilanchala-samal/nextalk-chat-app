@@ -111,6 +111,11 @@ const Chat = () => {
     }
   };
 
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      handleSend();
+    }
+  };
 
   return (
     <div className="chat">
@@ -177,6 +182,7 @@ const Chat = () => {
           onClick={() => setOpen(false)}
           onChange={(e) => setText(e.target.value)}
           disabled={isCurrentUserBlocked || isReceiverBlocked}
+          onKeyDown={handleKeyDown}
         />
         <div className="emoji">
           <img
