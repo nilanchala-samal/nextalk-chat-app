@@ -65,7 +65,7 @@ const ChatList = () => {
     };
 
     const filteredChats = chats.filter((c) =>
-        c.user.username.toLowerCase().includes(input.toLowerCase())
+        c.user?.username.toLowerCase().includes(input.toLowerCase())
     );
 
     return (
@@ -114,7 +114,7 @@ const ChatList = () => {
                 </div>
             ))}
 
-            {addMode && <AddUser />}
+            {addMode && <AddUser addMode={addMode} setAddMode={setAddMode} />}
         </div>
     );
 };

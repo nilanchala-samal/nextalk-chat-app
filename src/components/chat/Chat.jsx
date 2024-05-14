@@ -45,7 +45,6 @@ const Chat = () => {
 
   const handleEmoji = (e) => {
     setText((prev) => prev + e.emoji);
-    setOpen(false);
   };
 
   const handleImg = (e) => {
@@ -111,8 +110,13 @@ const Chat = () => {
     }
   };
 
+
   return (
-    <div className="chat">
+    <div className="chat" onClick={() => {
+      if (open) {
+        setOpen(false);
+      }
+    }}>
       <div className="top">
         <div className="user">
           <img src={user?.avatar || "./avatar.png"} alt="" />
@@ -173,6 +177,7 @@ const Chat = () => {
               : "Type a message..."
           }
           value={text}
+          onClick={() => setOpen(false)}
           onChange={(e) => setText(e.target.value)}
           disabled={isCurrentUserBlocked || isReceiverBlocked}
         />

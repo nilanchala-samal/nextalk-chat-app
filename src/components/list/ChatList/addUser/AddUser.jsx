@@ -4,7 +4,7 @@ import { db } from '../../../../firebase/firebase';
 import { useState } from 'react';
 import { useUserStore } from '../../../../firebase/userStore';
 
-const AddUser = () => {
+const AddUser = ({ addMode, setAddMode }) => {
 
     const [user, setUser] = useState(null);
     const { currentUser } = useUserStore();
@@ -62,6 +62,7 @@ const AddUser = () => {
         } catch (err) {
             console.log(err);
         }
+        setAddMode(!addMode);
     };
     return (
         <div className='addUser'>
