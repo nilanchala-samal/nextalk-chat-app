@@ -1,13 +1,40 @@
-import { auth } from '../../firebase/firebase';
-import './detail.css';
+import { arrayRemove, arrayUnion, doc, updateDoc } from "firebase/firestore";
+import { useChatStore } from "../../firebase/chatStore";
+import { auth, db } from "../../firebase/firebase";
+import { useUserStore } from "../../firebase/userStore";
+import "./detail.css";
 
 const Detail = () => {
+  const { user, isCurrentUserBlocked, isReceiverBlocked, changeBlock, resetChat } =
+    useChatStore();
+  const { currentUser } = useUserStore();
+
+  const handleBlock = async () => {
+    if (!user) return;
+
+    const userDocRef = doc(db, "users", currentUser.id);
+
+    try {
+      await updateDoc(userDocRef, {
+        blocked: isReceiverBlocked ? arrayRemove(user.id) : arrayUnion(user.id),
+      });
+      changeBlock();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleLogout = () => {
+    auth.signOut();
+    resetChat();
+  };
+
   return (
     <div className='detail'>
 
       <div className="user">
-        <img src="./avatar.png" alt="" />
-        <h3>John Doe</h3>
+        <img src={user?.avatar || "./avatar.png"} alt="" />
+        <h3>{user?.username}</h3>
         <p>Lorem ipsum dolor sit amet.</p>
       </div>
 
@@ -70,8 +97,14 @@ const Detail = () => {
           </div>
         </div>
         <div className='actions'>
-          <button>Block User</button>
-          <button className='logout' onClick={() => auth.signOut()}>Log out</button>
+          <button onClick={handleBlock}>
+            {isCurrentUserBlocked
+              ? "You are Blocked!"
+              : isReceiverBlocked
+                ? "User blocked"
+                : "Block User"}
+          </button>
+          <button className='logout' onClick={handleLogout}>Log out</button>
         </div>
       </div>
 

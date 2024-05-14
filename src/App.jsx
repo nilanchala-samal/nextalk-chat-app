@@ -6,8 +6,8 @@ import Login from "./components/login/Login";
 import Notification from "./components/notifications/Notification";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebase/firebase";
-import { useUserStore } from "./firebase/userStore";
 import { useChatStore } from "./firebase/chatStore";
+import { useUserStore } from "./firebase/userStore";
 
 const App = () => {
   const { currentUser, isLoading, fetchUserInfo } = useUserStore();
@@ -23,11 +23,10 @@ const App = () => {
     };
   }, [fetchUserInfo]);
 
-
   if (isLoading) return <div className="loading">Loading...</div>;
 
   return (
-    <div className='container'>
+    <div className="container">
       {currentUser ? (
         <>
           <List />
