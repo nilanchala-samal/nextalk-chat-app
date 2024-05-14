@@ -12,7 +12,7 @@ import { db } from "../../firebase/firebase";
 import { useChatStore } from "../../firebase/chatStore";
 import { useUserStore } from "../../firebase/userStore";
 import upload from "../../firebase/upload";
-// import { format } from "timeago.js";
+import { formatTimeAgo } from '../../firebase/timeAgo';
 
 const Chat = () => {
   const [chat, setChat] = useState();
@@ -107,6 +107,7 @@ const Chat = () => {
       });
 
       setText("");
+      setOpen(false);
     }
   };
 
@@ -130,15 +131,15 @@ const Chat = () => {
       <div className="center">
         {chat?.messages?.map((message) => (
           <div
+            key={message?.createAt}
             className={
               message.senderId === currentUser?.id ? "message own" : "message"
             }
-            key={message?.createAt}
           >
             <div className="texts">
               {message.img && <img src={message.img} alt="" />}
               <p>{message.text}</p>
-              {/* <span>{format(message.createdAt.toDate())}</span> */}
+              <span>{formatTimeAgo(message.createdAt.toDate())}</span>
             </div>
           </div>
         ))}
