@@ -112,11 +112,7 @@ const Chat = () => {
 
 
   return (
-    <div className="chat" onClick={() => {
-      if (open) {
-        setOpen(false);
-      }
-    }}>
+    <div className="chat">
       <div className="top">
         <div className="user">
           <img src={user?.avatar || "./avatar.png"} alt="" />
